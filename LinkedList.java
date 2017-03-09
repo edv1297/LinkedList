@@ -87,10 +87,9 @@ public class LinkedList<E> extends DoublyLinkedList<E>
      */
     protected E remove(DoublyLinkedNode<E> node)
     {
-
-  node.previous().setNext(node.next());
-  node.next().setPrevious(node.previous());
-
+	node.next().setPrevious(node.previous());
+	node.previous().setNext(node.next());
+      
 	return node.value();
     }
     /**
@@ -99,14 +98,13 @@ public class LinkedList<E> extends DoublyLinkedList<E>
      * @pre value is not null
      * @post adds element to head of list
      *
-     * @param value The value to be added.
      */
+
     public void addFirst(E value)
     {
 	// construct a new element, inserting it after the head
 	DoublyLinkedNode<E> n = new DoublyLinkedNode<E>(value, head.next(), head);
-  count++;
-
+	count++;
     }
 
     /**
@@ -127,7 +125,6 @@ public class LinkedList<E> extends DoublyLinkedList<E>
     }
 
     /**
-     * Remove a value from the head of the list.
      * Value is returned.
      *
      * @pre list is not empty
@@ -137,18 +134,18 @@ public class LinkedList<E> extends DoublyLinkedList<E>
      */
     public E removeFirst()
     {
-	// Students: modify this code.
+	//this will change the liks between the head node and will link to the second
+	//element in the List and then that node will point to the head making it
+	//the new first element in the list.
 
-  DoublyLinkedNode<E> n;
+       	Assert.pre(!isEmpty(),"List is not empty.");
+	DoublyLinkedNode<E> old = head;	
 
-  n = head;
-
-	Assert.pre(!isEmpty(),"List is not empty.");
-	head.setNext(n.next());
-  head.next().setPrevious(head);
+	head.setNext(old.next().next());
+	old.next().next().setPrevious(head);
 
 	count--;
-	return head.value();
+	return old.next().value();
     }
 
     /**
@@ -161,16 +158,19 @@ public class LinkedList<E> extends DoublyLinkedList<E>
      */
     public E removeLast()
     {
-	// Students: modify this code.
+	//Similiar to the removeFirst method, what we want to do here is to change the 
+	//previous links of the tail node to the one before the last node and then make
+	//that node point to the tail, then Java collects the "pointer.previous() node".
+
 	Assert.pre(!isEmpty(),"List is not empty.");
 	DoublyLinkedNode<E> pointer = tail;
-      pointer.previous().setNext(tail);
-      tail.setPrevious(pointer.previous());
-      count--;
+	
+	tail.previous().setNext(tail);
+	tail.setPrevious(pointer.previous());
+	
+	count--;
     	return pointer.previous().value();
 	}
-
-
 
     /**
      * Get a copy of the first value found in the list.
@@ -207,7 +207,6 @@ public class LinkedList<E> extends DoublyLinkedList<E>
      * @param o the the value to be stored
      */
     public void add(int i, E o){
-
   Assert.pre((0 <= i) &&
 		   (i <= size()), "Index in range.");
 	if (i == 0) addFirst(o);
@@ -220,13 +219,9 @@ public class LinkedList<E> extends DoublyLinkedList<E>
 		pointer = pointer.next();
 		i--;
 	    }
-	    // create new value to insert in correct position
+	    //call the insertAfter and let it handle the creation of a new node
 	  insertAfter(o, pointer);
-
       count++;
-
-	    // make after and before value point to new value
-
 	}
     }
 
@@ -245,11 +240,9 @@ public class LinkedList<E> extends DoublyLinkedList<E>
 	Assert.pre((0 <= i) &&
 		   (i < size()), "Index in range.");
 	if (i == 0) return removeFirst();
-	else if (i == size()-1) return removeLast();
-
+	else if (i == count) return removeLast();
 	DoublyLinkedNode<E> pointer = head;
-	// search for the value indexed, keep track of previous
-	while (i > 0)
+	while(i>0)
 	{
 	    pointer = pointer.next();
 	    i--;
@@ -257,8 +250,8 @@ public class LinkedList<E> extends DoublyLinkedList<E>
 	pointer.previous().setNext(pointer.next());
 	pointer.next().setPrevious(pointer.previous());
 	count--;
-	// pointer's value is old value, return it
-	return null;
+       // pointer's value is old value, return it
+	 return get(i);
     }
 
     /**
@@ -354,14 +347,14 @@ public class LinkedList<E> extends DoublyLinkedList<E>
     public int lastIndexOf(E value){
 
 	int i = size()-1;
-	DoublyLinkedNode<E> pointer = tail;
+	DoublyLinkedNode<E> pointer = tail.previous();
 	// search for the last matching value, result is desired index
-	while (pointer != head && !pointer.value().equals(value))
+	while (pointer != head  && !pointer.value().equals(value))
 	{
 	    pointer = pointer.previous();
 	    i--;
 	}
-	if (pointer == null)
+	if (pointer == head)
 	{   // value not found, return indicator
 	    return -1;
 	} else {
@@ -397,7 +390,6 @@ public class LinkedList<E> extends DoublyLinkedList<E>
 
     public E remove(E value)
     {
-
 	DoublyLinkedNode<E> pointer = head;
 	while (pointer.next() != tail &&
 	       !pointer.value().equals(value))
