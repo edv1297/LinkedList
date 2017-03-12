@@ -24,7 +24,6 @@ public class TestLinkedList {
 		compareList("0 1 2 3 4 5", list);
 
 		list.clear();
-
 		//This next line breaks in the default code because
 		// of the edge conditions that our Lab 5 solves.
 		//When you have finished implementing your code,
